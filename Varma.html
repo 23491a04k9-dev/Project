@@ -1,0 +1,533 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VisionGuard AI Dashboard</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #17243a;
+}
+
+header {
+    background: #111c31;
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h2 span {
+    color: #38bdf8;
+}
+
+header small {
+    color: #94a3b8;
+}
+
+.layout {
+    display: flex;
+    min-height: calc(100vh - 75px);
+}
+
+.sidebar {
+    width: 220px;
+    background: #111c31;
+    padding: 25px 15px;
+    flex-shrink: 0;
+}
+
+.sidebar a {
+    display: block;
+    text-decoration: none;
+    color: #cbd5e1;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.sidebar a:hover {
+    background: #263e60;
+    color: white;
+}
+
+main {
+    flex: 1;
+    padding: 25px;
+    min-width: 0;
+}
+
+.welcome {
+    margin-bottom: 25px;
+}
+
+.welcome p {
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.card, .panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 12px #0000000b;
+}
+
+.card p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.card h2 {
+    margin-top: 12px;
+    font-size: 24px;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.panel h3 {
+    margin-bottom: 8px;
+}
+
+.subtext {
+    color: #94a3b8;
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.camera {
+    background: #0f172a;
+    border-radius: 10px;
+    height: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: white;
+}
+
+.camera img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.camera-placeholder {
+    text-align: center;
+    padding: 15px;
+}
+
+.distance {
+    text-align: center;
+    padding: 30px 10px;
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.distance h1 {
+    font-size: 50px;
+    color: #0284c7;
+}
+
+.distance p {
+    color: #64748b;
+}
+
+.status {
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    font-size: 14px;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.detail {
+    background: #f1f5f9;
+    padding: 15px 8px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.detail p {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.detail h3 {
+    margin-top: 8px;
+}
+
+.device {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid #e2e8f0;
+    gap: 10px;
+}
+
+.device small {
+    display: block;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+.badge {
+    color: #b45309;
+    font-size: 12px;
+}
+
+.emergency {
+    border-left: 5px solid #22c55e;
+}
+
+footer {
+    text-align: center;
+    color: #64748b;
+    padding: 25px 10px;
+    font-size: 12px;
+}
+
+@media(max-width: 1000px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 650px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        gap: 5px;
+        padding: 10px;
+    }
+
+    .sidebar a {
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    main {
+        padding: 15px;
+    }
+
+    header {
+        padding: 15px;
+    }
+
+    .cards {
+        gap: 10px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .camera {
+        height: 230px;
+    }
+
+    .details {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h2>VisionGuard <span>AI</span></h2>
+        <small>Smart Assistive Cap Dashboard</small>
+    </div>
+    <div id="connection">Connecting...</div>
+</header>
+
+<div class="layout">
+
+<nav class="sidebar">
+    <a href="#overview">Dashboard</a>
+    <a href="#camera">Live Camera</a>
+    <a href="#obstacle">Obstacle Detection</a>
+    <a href="#battery">Battery</a>
+    <a href="#devices">Devices</a>
+    <a href="#emergency">Emergency</a>
+</nav>
+
+<main>
+
+<section class="welcome" id="overview">
+    <h1>Welcome to VisionGuard AI</h1>
+    <p>Real-time vision, obstacle detection and safety monitoring.</p>
+</section>
+
+<section class="cards">
+
+    <div class="card">
+        <p>Camera Status</p>
+        <h2 id="cameraStatus">Waiting</h2>
+        <small>ESP32-CAM</small>
+    </div>
+
+    <div class="card">
+        <p>Obstacle Distance</p>
+        <h2 id="distanceCard">-- cm</h2>
+        <small>HC-SR04</small>
+    </div>
+
+    <div class="card">
+        <p>Battery Percentage</p>
+        <h2 id="percentageCard">-- %</h2>
+        <small>Battery Monitor</small>
+    </div>
+
+    <div class="card">
+        <p>Bluetooth Status</p>
+        <h2 id="bluetoothStatus">Waiting</h2>
+        <small>Normal ESP32</small>
+    </div>
+
+</section>
+
+<section class="content">
+
+    <div class="panel" id="camera">
+        <h3>Live Camera Streaming</h3>
+        <p class="subtext">ESP32-CAM / Wi-Fi</p>
+
+        <div class="camera">
+            <img id="cameraFeed" src=""
+                 alt="Camera stream"
+                 onerror="cameraFailed()">
+
+            <div id="cameraPlaceholder" class="camera-placeholder">
+                <h3>Camera not connected</h3>
+                <p>Check ESP32-CAM IP address and stream server.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" id="obstacle">
+        <h3>Obstacle Detection</h3>
+        <p class="subtext">HC-SR04 Ultrasonic Sensor</p>
+
+        <div class="distance">
+            <h1 id="distance">--</h1>
+            <p>Distance in centimetres</p>
+        </div>
+
+        <div class="status" id="obstacleStatus">
+            Waiting for sensor data
+        </div>
+    </div>
+
+</section>
+
+<section class="content">
+
+    <div class="panel" id="battery">
+        <h3>Battery Monitoring</h3>
+        <p class="subtext">INA219 voltage and current monitor</p>
+
+        <div class="details">
+            <div class="detail">
+                <p>Voltage</p>
+                <h3 id="voltage">-- V</h3>
+            </div>
+
+            <div class="detail">
+                <p>Current</p>
+                <h3 id="current">-- mA</h3>
+            </div>
+
+            <div class="detail">
+                <p>Power</p>
+                <h3 id="power">-- mW</h3>
+            </div>
+        </div>
+
+        <div class="status">
+            Battery Level: <strong id="batteryLevel">-- %</strong>
+        </div>
+    </div>
+
+    <div class="panel" id="devices">
+        <h3>Controller Status</h3>
+        <p class="subtext">Hardware connectivity</p>
+
+        <div class="device">
+            <div>
+                <strong>ESP32-CAM</strong>
+                <small>Camera controller</small>
+            </div>
+            <span class="badge" id="camDevice">Waiting</span>
+        </div>
+
+        <div class="device">
+            <div>
+                <strong>Normal ESP32</strong>
+                <small>Main controller</small>
+            </div>
+            <span class="badge" id="mainDevice">Waiting</span>
+        </div>
+
+        <div class="device">
+            <div>
+                <strong>DFPlayer Mini</strong>
+                <small>Voice alert module</small>
+            </div>
+            <span class="badge">Firmware status not reported</span>
+        </div>
+    </div>
+
+</section>
+
+<section class="panel emergency" id="emergency">
+    <h3>Emergency Center</h3>
+    <p class="subtext">SOS button and emergency status</p>
+    <div class="status" id="emergencyStatus">
+        No emergency data received
+    </div>
+</section>
+
+<footer>
+    VisionGuard AI © 2026 | Assistive Technology Project
+</footer>
+
+</main>
+</div>
+
+<script>
+/* EDIT THESE TWO ADDRESSES AFTER UPLOADING FIRMWARE */
+
+const CAMERA_STREAM = "http://192.168.1.100:81/stream";
+const ESP32_API = "http://192.168.1.101/api/status";
+
+/* CAMERA */
+
+const cameraFeed = document.getElementById("cameraFeed");
+
+cameraFeed.src = CAMERA_STREAM;
+
+cameraFeed.onload = () => {
+    document.getElementById("cameraPlaceholder").style.display = "none";
+    document.getElementById("cameraStatus").textContent = "Connected";
+    document.getElementById("camDevice").textContent = "Connected";
+};
+
+function cameraFailed() {
+    document.getElementById("cameraStatus").textContent = "Offline";
+    document.getElementById("camDevice").textContent = "Offline";
+    document.getElementById("cameraPlaceholder").style.display = "block";
+}
+
+/* SENSOR DATA FROM NORMAL ESP32 */
+
+async function updateDashboard() {
+    try {
+        const response = await fetch(ESP32_API, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error("ESP32 response error");
+        }
+
+        const data = await response.json();
+
+        document.getElementById("connection").textContent =
+            "Main ESP32 Connected";
+
+        document.getElementById("mainDevice").textContent =
+            "Connected";
+
+        document.getElementById("distance").textContent =
+            data.distance_cm.toFixed(1);
+
+        document.getElementById("distanceCard").textContent =
+            data.distance_cm.toFixed(1) + " cm";
+
+        document.getElementById("voltage").textContent =
+            data.voltage.toFixed(2) + " V";
+
+        document.getElementById("current").textContent =
+            data.current_mA.toFixed(1) + " mA";
+
+        document.getElementById("power").textContent =
+            data.power_mW.toFixed(1) + " mW";
+
+        document.getElementById("batteryLevel").textContent =
+            data.battery_percent + "%";
+
+        document.getElementById("percentageCard").textContent =
+            data.battery_percent + "%";
+
+        document.getElementById("bluetoothStatus").textContent =
+            data.bluetooth ? "Enabled" : "Disabled";
+
+        document.getElementById("emergencyStatus").textContent =
+            data.emergency ? "SOS ALERT ACTIVE" : "No emergency detected";
+
+        let status = "Path clear";
+
+        if (data.distance_cm <= 15) {
+            status = "STOP! Very close obstacle";
+        } else if (data.distance_cm <= 50) {
+            status = "Obstacle detected nearby";
+        }
+
+        document.getElementById("obstacleStatus").textContent = status;
+
+    } catch (error) {
+        document.getElementById("connection").textContent =
+            "Main ESP32 Offline";
+
+        document.getElementById("mainDevice").textContent =
+            "Offline";
+    }
+}
+
+updateDashboard();
+setInterval(updateDashboard, 1000);
+</script>
+
+</body>
+</html>
